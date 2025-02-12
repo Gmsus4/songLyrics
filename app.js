@@ -16,9 +16,9 @@ async function getLyrics(track, artist) {
     const lyrics = await firstSong.lyrics();
     const lyricsData = lyrics + "\n";
 
-    const cleanedLyrics = lyricsData.replace(/\[.*?\]/g, '').trim();
-    // return lyricsData;
-    return cleanedLyrics;
+    // const cleanedLyrics = lyricsData.replace(/\[.*?\]/g, '').trim();
+    return lyricsData;
+    // return cleanedLyrics;
 }
 
 app.get('/search', (req, res) => { //Búsqueda de la letra de alguna canción
