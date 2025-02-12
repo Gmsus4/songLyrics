@@ -17,7 +17,7 @@ async function getLyrics(track, artist) {
     const lyricsData = lyrics + "\n";
 
     // const cleanedLyrics = lyricsData.replace(/\[.*?\]/g, '').trim();
-    return lyricsData;
+    return {lyricsData};
     // return cleanedLyrics;
 }
 
