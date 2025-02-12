@@ -1,3 +1,4 @@
+require('dotenv').config(); // Asegúrate de tener esto al inicio de tu archivo
 const express = require('express');
 
 const Genius = require("genius-lyrics");
@@ -5,7 +6,7 @@ const Genius = require("genius-lyrics");
 const Client = new Genius.Client(process.env.CLIENTACCESSTOKEN);
 
 const app = express();
-const PORT = 3000;
+const PORT = process.env.PORT || 3000;
 
 // Middleware para parsear el cuerpo de las solicitudes JSON
 app.use(express.json());
