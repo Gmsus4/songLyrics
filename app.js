@@ -21,6 +21,11 @@ async function getLyrics(track, artist) {
     // return cleanedLyrics;
 }
 
+app.get('/', (req, res) => { 
+    res.send('Funcionando...')
+
+});
+
 app.get('/search', (req, res) => { //Búsqueda de la letra de alguna canción
     const { title, artist } = req.query;
     getLyrics(title, artist)
