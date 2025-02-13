@@ -1,9 +1,12 @@
 const express = require('express');
 const axios = require('axios');
 const cheerio = require('cheerio');
+const cors = require("cors");
 
 const app = express();
 const PORT = 3000;
+
+app.use(cors());
 
 // Middleware para parsear JSON
 app.use(express.json());
@@ -38,6 +41,34 @@ async function getLyrics(track, artist) {
     }
 }
 
+function formatChordsAndLyrics(rawText) {
+    const lines = rawText.split("\n");
+    let formattedText = "";
+    let lastChordsLine = "";
+
+    for (let line of lines) {
+        if (line.trim() === "") {
+            formattedText += "\n"; // Mantiene los espacios entre secciones
+            continue;
+        }
+
+        // Detecta si es una línea de acordes (solo contiene letras y números)
+        const isChordLine = /^[A-G][#b]?m?(maj|min|dim|sus|aug|add)?[0-9]?(\s+[A-G][#b]?m?(maj|min|dim|sus|aug|add)?[0-9]?)*$/.test(line.trim());
+
+        if (isChordLine) {
+            lastChordsLine = line; // Guarda la línea de acordes temporalmente
+        } else {
+            // Si es una línea de letra, coloca los acordes arriba y la letra debajo
+            if (lastChordsLine) {
+                formattedText += lastChordsLine + "\n";
+                lastChordsLine = ""; // Limpia para evitar repetir
+            }
+            formattedText += line + "\n";
+        }
+    }
+
+    return formattedText.trim(); // Elimina espacios extra al final
+}
 
 const getChordsAndLyrics = async (song, artist) => {
     try {
@@ -58,7 +89,7 @@ const getChordsAndLyrics = async (song, artist) => {
         const url = `https://www.cifraclub.com/${formattedArtist}/${formattedSong}/`;
 
         console.log(`Accediendo a: ${url}`);
-
+        
         const { data } = await axios.get(url);
         const $ = cheerio.load(data);
         const chordsAndLyrics = $('pre').text().trim();
@@ -67,7 +98,12 @@ const getChordsAndLyrics = async (song, artist) => {
             throw new Error("No se encontraron acordes ni letra.");
         }
 
-        return chordsAndLyrics;
+        console.log(chordsAndLyrics);
+        console.log('-----------------')
+        console.log(formatChordsAndLyrics(chordsAndLyrics));
+        const chordsAndLyricsFormat = formatChordsAndLyrics(chordsAndLyrics);
+        // return chordsAndLyrics;
+        return chordsAndLyricsFormat;
 
     } catch (error) {
         console.error("Error al obtener los acordes:", error.message);
