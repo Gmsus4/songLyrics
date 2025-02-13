@@ -28,18 +28,54 @@ async function getLyrics(track, artist) {
         });
         
         lines = (times.length + lyrics.length) / 2;
-
         const filteredLyrics = lyrics.filter(line => line.trim() !== "");
-        // console.log(times.length);
-        // console.log(lyrics.length);
 
-        // return {plainLyrics, syncedLyrics, times, filteredLyrics, lines};
         return {plainLyrics, syncedLyrics, times, filteredLyrics, lines};
     } catch (error) {
         console.error('Error obteniendo la letra:', error.message);
         throw error;
     }
 }
+
+
+const getChordsAndLyrics = async (song, artist) => {
+    try {
+        const formattedArtist = artist.toLowerCase().replace(/ /g, "-");
+        const formattedSong = song.toLowerCase().replace(/ /g, "-");
+        const url = `https://www.cifraclub.com/${formattedArtist}/${formattedSong}/`;
+
+        console.log(`Accediendo a: ${url}`);
+
+        const { data } = await axios.get(url);
+        const $ = cheerio.load(data);
+        const chordsAndLyrics = $('pre').text().trim();
+
+        if (!chordsAndLyrics) {
+            throw new Error("No se encontraron acordes ni letra.");
+        }
+
+        return chordsAndLyrics;
+
+    } catch (error) {
+        console.error("Error al obtener los acordes:", error.message);
+        throw new Error("No se pudo obtener los acordes y la letra.");
+    }
+};
+
+// Ruta para obtener acordes y letra
+app.get('/chords', async (req, res) => {
+    const { song, artist } = req.query;
+    if (!song || !artist) {
+        return res.status(400).json({ error: "Debes proporcionar 'song' y 'artist'" });
+    }
+
+    try {
+        const data = await getChordsAndLyrics(song, artist);
+        res.json(data);
+    } catch (error) {
+        res.status(500).json({ error: error.message });
+    }
+});
 
 // Ruta de búsqueda
 app.get('/search', async (req, res) => {
