@@ -33,6 +33,7 @@ async function getLyrics(track, artist) {
         // console.log(times.length);
         // console.log(lyrics.length);
 
+        // return {plainLyrics, syncedLyrics, times, filteredLyrics, lines};
         return {plainLyrics, syncedLyrics, times, filteredLyrics, lines};
     } catch (error) {
         console.error('Error obteniendo la letra:', error.message);
@@ -50,7 +51,8 @@ app.get('/search', async (req, res) => {
 
     try {
         const lyricsData = await getLyrics(song, artist);
-        res.send(lyricsData);
+        // res.send(lyricsData);
+        res.send(lyricsData.plainLyrics);
     } catch (error) {
         res.status(500).json({ error: error.message });
     }
