@@ -41,8 +41,20 @@ async function getLyrics(track, artist) {
 
 const getChordsAndLyrics = async (song, artist) => {
     try {
-        const formattedArtist = artist.toLowerCase().replace(/ /g, "-");
-        const formattedSong = song.toLowerCase().replace(/ /g, "-");
+        const formattedArtist = artist
+            .toLowerCase()
+            .normalize("NFD") // Descompone caracteres acentuados
+            .replace(/[\u0300-\u036f]/g, "") // Elimina los diacríticos (acentos)
+            .replace(/ñ/g, "n") // Reemplaza ñ por n
+            .replace(/ /g, "-"); // Reemplaza espacios por guiones
+
+        const formattedSong = song
+            .toLowerCase()
+            .normalize("NFD")
+            .replace(/[\u0300-\u036f]/g, "")
+            .replace(/ñ/g, "n")
+            .replace(/ /g, "-");
+        
         const url = `https://www.cifraclub.com/${formattedArtist}/${formattedSong}/`;
 
         console.log(`Accediendo a: ${url}`);
