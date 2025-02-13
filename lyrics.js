@@ -33,7 +33,7 @@ async function getLyrics(track, artist) {
         // console.log(times.length);
         // console.log(lyrics.length);
 
-        return {plainLyrics, filteredLyrics, times, lyrics, lines};
+        return {plainLyrics, syncedLyrics, times, filteredLyrics, lines};
     } catch (error) {
         console.error('Error obteniendo la letra:', error.message);
         throw error;
