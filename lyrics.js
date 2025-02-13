@@ -29,10 +29,11 @@ async function getLyrics(track, artist) {
         
         lines = (times.length + lyrics.length) / 2;
 
+        const filteredLyrics = lyrics.filter(line => line.trim() !== "");
         // console.log(times.length);
         // console.log(lyrics.length);
 
-        return {plainLyrics, syncedLyrics, times, lyrics, lines};
+        return {plainLyrics, filteredLyrics, times, lyrics, lines};
     } catch (error) {
         console.error('Error obteniendo la letra:', error.message);
         throw error;
